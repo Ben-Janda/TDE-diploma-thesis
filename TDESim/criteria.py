@@ -13,12 +13,31 @@ def check_intersection(params: SimulationParams, points1, points2, W1, W2):
     Test intersection of two ellipses and return first intersection point
     """
     
-    D = np.linalg.norm(points1 - points2, axis = 0) - S(params, points1, W1) - S(params, points2, W2)
+    diff = points1[:,:,np.newaxis] - points2[:,np.newaxis,:]
     
-    if np.any(D < 0):
-        return {'test': True, 'point': np.transpose(points1)[np.where(D < 0)][0]}
+    dist_sq = np.sum(diff**2, axis=0)
+    
+    S1 = S(params, points1, W1)
+    S2 = S(params, points2, W2)
+    
+    overlap = dist_sq < (S1[:, np.newaxis] + S2[np.newaxis, :])**2
+    
+    if np.any(overlap):
+        i, _ = np.argwhere(overlap)[0]
+        return {'test': True, 'point': points1[:,i]}
     
     return {'test': False, 'point': None}
+        
+# =============================================================================
+#     # Originalni kod:
+#
+#     D = np.linalg.norm(points1 - points2, axis = 0) - S(params, points1, W1) - S(params, points2, W2)
+#     
+#     if np.any(D < 0):
+#         return {'test': True, 'point': np.transpose(points1)[np.where(D < 0)][0]}
+#     
+#     return {'test': False, 'point': None}
+# =============================================================================
 
 def check_IBCO(beta: float, i: float, a: float, Mh: float, Rstar: float, Mstar: float) -> bool:
     """

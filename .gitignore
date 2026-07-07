@@ -19,6 +19,7 @@ data/
 outputs/*.csv
 outputs/*.log
 backup_files/
+graphics/
 
 # System:
 .DS_Store
